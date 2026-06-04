@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🌸 A Special Surprise For You! 🌸</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --pink-light: #ffe4f0;
+      --pink-mid:   #ffb3d9;
+      --pink-dark:  #ff69b4;
+      --pink-deep:  #e91e8c;
+      --rose:       #ff1493;
+      --cream:      #fff8fb;
+    }
+
+    html, body {
+      width: 100%; height: 100%;
+      font-family: 'Nunito', sans-serif;
+      overflow-x: hidden;
+      background: linear-gradient(135deg, #ffe0f0 0%, #ffc2e2 40%, #ffadd6 70%, #ff85c2 100%);
+    }
+
+    /* ─── PETAL CANVAS ─── */
+    #petalCanvas {
+      position: fixed; inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ─── FLOATING DECORATIONS ─── */
+    .deco {
+      position: fixed;
+      pointer-events: none;
+      z-index: 1;
+      animation: floatDeco 6s ease-in-out infinite;
+      user-select: none;
+      font-size: 1.6rem;
+    }
+    @keyframes floatDeco {
+      0%,100% { transform: translateY(0) rotate(0deg); }
+      50%      { transform: translateY(-18px) rotate(12deg); }
+    }
+
+    /* ─── LANDING PAGE ─── */
+    #landingPage {
+      position: relative; z-index: 10;
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh; padding: 20px;
+    }
+
+    .landing-card {
+      background: rgba(255,255,255,0.82);
+      backdrop-filter: blur(18px);
+      border-radius: 32px;
+      padding: 52px 44px 48px;
+      max-width: 460px; width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(233,30,140,0.22), 0 2px 12px rgba(255,105,180,0.18);
+      border: 2.5px solid rgba(255,180,220,0.55);
+      animation: cardPop 0.7s cubic-bezier(.34,1.56,.64,1) both;
+    }
+    @keyframes cardPop {
+      from { transform: scale(0.7) translateY(40px); opacity: 0; }
+      to   { transform: scale(1) translateY(0);      opacity: 1; }
+    }
+
+    .landing-emoji { font-size: 4rem; display: block; margin-bottom: 8px; animation: spin 3s linear infinite; }
+    @keyframes spin {
+      0%   { transform: rotate(0deg)   scale(1);   }
+      25%  { transform: rotate(8deg)   scale(1.08);}
+      50%  { transform: rotate(0deg)   scale(1);   }
+      75%  { transform: rotate(-8deg)  scale(1.08);}
+      100% { transform: rotate(0deg)   scale(1);   }
+    }
+
+    .landing-title {
+      font-family: 'Pacifico', cursive;
+      font-size: 2rem; color: var(--pink-deep);
+      text-shadow: 2px 2px 0 rgba(255,180,220,0.6);
+      margin-bottom: 6px;
+    }
+    .landing-sub {
+      font-size: 1rem; color: #c2607a;
+      margin-bottom: 30px; font-weight: 600;
+    }
+
+    .input-wrap {
+      position: relative; margin-bottom: 18px;
+    }
+    .input-wrap input {
+      width: 100%;
+      padding: 15px 22px;
+      border-radius: 50px;
+      border: 2.5px solid var(--pink-mid);
+      background: #fff0f8;
+      font-size: 1.05rem;
+      font-family: 'Nunito', sans-serif;
+      color: #a0284e;
+      outline: none;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .input-wrap input::placeholder { color: #e8a0bc; }
+    .input-wrap input:focus {
+      border-color: var(--pink-deep);
+      box-shadow: 0 0 0 4px rgba(233,30,140,0.13);
+    }
+
+    .btn-enter {
+      width: 100%;
+      padding: 15px;
+      border-radius: 50px;
+      border: none;
+      background: linear-gradient(135deg, #ff69b4, #e91e8c);
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 800;
+      font-family: 'Nunito', sans-serif;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      transition: transform 0.18s, box-shadow 0.18s;
+      box-shadow: 0 6px 24px rgba(233,30,140,0.35);
+    }
+    .btn-enter:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 10px 32px rgba(233,30,140,0.45);
+    }
+    .btn-enter:active { transform: scale(0.97); }
+
+    .error-msg {
+      color: #e91e8c; font-size: 0.87rem;
+      font-weight: 700; margin-top: 10px;
+      display: none; animation: shake 0.4s ease;
+    }
+    @keyframes shake {
+      0%,100%{ transform:translateX(0);}
+      20%{transform:translateX(-8px);}
+      40%{transform:translateX(8px);}
+      60%{transform:translateX(-5px);}
+      80%{transform:translateX(5px);}
+    }
+
+    /* ─── SURPRISE PAGE ─── */
+    #surprisePage {
+      position: relative; z-index: 10;
+      display: none;
+      align-items: center; justify-content: center;
+      min-height: 100vh; padding: 20px;
+    }
+
+    .surprise-card {
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(20px);
+      border-radius: 36px;
+      padding: 52px 44px 48px;
+      max-width: 520px; width: 100%;
+      text-align: center;
+      box-shadow: 0 24px 70px rgba(233,30,140,0.22), 0 2px 12px rgba(255,105,180,0.18);
+      border: 2.5px solid rgba(255,180,220,0.55);
+      animation: cardPop 0.7s cubic-bezier(.34,1.56,.64,1) both;
+      position: relative; overflow: visible;
+    }
+
+    .surprise-icon {
+      font-size: 4.5rem; display: block;
+      animation: heartbeat 1.4s ease-in-out infinite;
+      margin-bottom: 10px;
+    }
+    @keyframes heartbeat {
+      0%,100%{ transform: scale(1);    }
+      14%    { transform: scale(1.18); }
+      28%    { transform: scale(1);    }
+      42%    { transform: scale(1.12); }
+      70%    { transform: scale(1);    }
+    }
+
+    .surprise-title {
+      font-family: 'Pacifico', cursive;
+      font-size: 1.6rem; color: var(--pink-deep);
+      text-shadow: 2px 2px 0 rgba(255,180,220,0.5);
+      margin-bottom: 26px; line-height: 1.45;
+      word-break: break-word;
+    }
+    .surprise-title .user-name {
+      color: var(--rose);
+      text-shadow: 2px 2px 0 rgba(255,105,180,0.4);
+    }
+
+    /* sparkle ring */
+    .sparkle-row {
+      display: flex; justify-content: center; gap: 10px;
+      font-size: 1.3rem; margin-bottom: 28px;
+      animation: sparkleAnim 2s ease-in-out infinite;
+    }
+    @keyframes sparkleAnim {
+      0%,100%{ opacity:1; transform:scale(1); }
+      50%    { opacity:0.6; transform:scale(0.93); }
+    }
+
+    /* ─── BUTTONS ─── */
+    #yesBtn {
+      position: fixed;
+      z-index: 9999;
+      padding: 16px 38px;
+      border-radius: 50px;
+      border: none;
+      background: linear-gradient(135deg, #ff69b4, #e91e8c);
+      color: #fff;
+      font-size: 1.15rem;
+      font-weight: 900;
+      font-family: 'Nunito', sans-serif;
+      cursor: pointer;
+      box-shadow: 0 8px 28px rgba(233,30,140,0.4);
+      transition: box-shadow 0.15s;
+      white-space: nowrap;
+      user-select: none;
+    }
+    #yesBtn:hover { box-shadow: 0 12px 36px rgba(233,30,140,0.55); }
+
+    .btn-no {
+      display: inline-block;
+      padding: 16px 38px;
+      border-radius: 50px;
+      border: 2.5px solid #ffb3d9;
+      background: #fff0f8;
+      color: #c2607a;
+      font-size: 1.15rem;
+      font-weight: 900;
+      font-family: 'Nunito', sans-serif;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.18s, box-shadow 0.18s;
+      box-shadow: 0 4px 14px rgba(233,30,140,0.12);
+      white-space: nowrap;
+    }
+    .btn-no:hover {
+      background: #ffe0f0;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 22px rgba(233,30,140,0.2);
+    }
+    .btn-no:active { transform: scale(0.96); }
+
+    .buttons-row {
+      display: flex; align-items: center; justify-content: center;
+      gap: 20px; flex-wrap: wrap; margin-top: 10px;
+    }
+
+    /* placeholder for yes button space in card */
+    .yes-placeholder {
+      display: inline-block;
+      padding: 16px 38px;
+      border-radius: 50px;
+      background: transparent;
+      font-size: 1.15rem;
+      pointer-events: none;
+      visibility: hidden;
+      white-space: nowrap;
+    }
+
+    /* ─── FUNNY MESSAGE ─── */
+    #funnyMsg {
+      display: none;
+      position: fixed; inset: 0; z-index: 10000;
+      background: rgba(255,220,240,0.96);
+      align-items: center; justify-content: center;
+      flex-direction: column;
+      text-align: center; padding: 30px;
+      animation: fadeIn 0.4s ease;
+    }
+    @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+    #funnyMsg .funny-emoji { font-size: 5rem; margin-bottom: 16px; animation: shake 0.5s infinite alternate; }
+    #funnyMsg h2 {
+      font-family: 'Pacifico', cursive;
+      font-size: 1.9rem; color: var(--pink-deep);
+      margin-bottom: 12px; line-height: 1.4;
+    }
+    #funnyMsg p {
+      font-size: 1.05rem; color: #a0284e; font-weight: 700;
+      max-width: 380px;
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 500px) {
+      .landing-card, .surprise-card { padding: 38px 22px 36px; }
+      .landing-title { font-size: 1.55rem; }
+      .surprise-title { font-size: 1.3rem; }
+      #yesBtn, .btn-no { padding: 14px 28px; font-size: 1rem; }
+    }
+
+    /* ─── SHOP OVERLAY ─── */
+    #shopOverlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 999999;
+      background: #fff;
+      flex-direction: column;
+      animation: fadeIn 0.4s ease;
+    }
+    #shopOverlay.active { display: flex; }
+
+    #shopOverlay iframe {
+      width: 100%;
+      flex: 1;
+      border: none;
+      display: block;
+    }
+
+    #shopTopBar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(135deg, #ff69b4, #e91e8c);
+      padding: 8px 16px;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    #shopTopBar span {
+      color: #fff;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
+      font-size: 0.95rem;
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    #shopTopBar a {
+      color: #fff;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-decoration: none;
+      background: rgba(255,255,255,0.22);
+      padding: 5px 12px;
+      border-radius: 50px;
+      border: 1.5px solid rgba(255,255,255,0.5);
+      white-space: nowrap;
+      transition: background 0.2s;
+    }
+    #shopTopBar a:hover { background: rgba(255,255,255,0.38); }
+
+    #closeShopBtn {
+      background: rgba(255,255,255,0.22);
+      border: 1.5px solid rgba(255,255,255,0.5);
+      color: #fff;
+      border-radius: 50%;
+      width: 34px; height: 34px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.2s;
+    }
+    #closeShopBtn:hover { background: rgba(255,255,255,0.4); }
+
+    #iframeBlockMsg {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      gap: 18px;
+      background: #fff0f8;
+      text-align: center;
+      padding: 30px;
+    }
+    #iframeBlockMsg p {
+      font-family: 'Nunito', sans-serif;
+      font-size: 1.05rem;
+      color: #a0284e;
+      font-weight: 700;
+      max-width: 360px;
+    }
+    #iframeBlockMsg a {
+      padding: 14px 32px;
+      border-radius: 50px;
+      background: linear-gradient(135deg, #ff69b4, #e91e8c);
+      color: #fff;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
+      font-size: 1.05rem;
+      text-decoration: none;
+      box-shadow: 0 6px 22px rgba(233,30,140,0.35);
+      transition: transform 0.18s, box-shadow 0.18s;
+    }
+    #iframeBlockMsg a:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(233,30,140,0.45);
+    }
+  </style>
+</head>
+<body>
+
+<!-- PETAL CANVAS -->
+<canvas id="petalCanvas"></canvas>
+
+<!-- FLOATING DECORATIONS -->
+<div class="deco" style="top:6%; left:5%;  animation-delay:0s;   animation-duration:5s;">💖</div>
+<div class="deco" style="top:10%; right:6%; animation-delay:0.8s; animation-duration:6.5s;">✨</div>
+<div class="deco" style="top:80%; left:4%;  animation-delay:1.2s; animation-duration:5.5s;">🌸</div>
+<div class="deco" style="top:85%; right:5%; animation-delay:0.4s; animation-duration:7s;">💕</div>
+<div class="deco" style="top:40%; left:2%;  animation-delay:1.8s; animation-duration:6s;">⭐</div>
+<div class="deco" style="top:55%; right:2%; animation-delay:0.2s; animation-duration:5.2s;">🌷</div>
+<div class="deco" style="top:22%; left:12%; animation-delay:2s;   animation-duration:4.8s; font-size:1.1rem;">💫</div>
+<div class="deco" style="top:70%; right:10%;animation-delay:1s;   animation-duration:6.2s; font-size:1.1rem;">🎀</div>
+
+<!-- ══════════════════════════════════════════════
+     LANDING PAGE
+══════════════════════════════════════════════ -->
+<div id="landingPage">
+  <div class="landing-card">
+    <span class="landing-emoji">🌸</span>
+    <h1 class="landing-title">Hey There, Cutie!</h1>
+    <p class="landing-sub">Enter your name to unlock a special surprise 🎁</p>
+
+    <div class="input-wrap">
+      <input
+        type="text"
+        id="nameInput"
+        placeholder="✨ Your full name here..."
+        maxlength="50"
+        autocomplete="off"
+        spellcheck="false"
+      />
+    </div>
+    <button class="btn-enter" onclick="goToSurprise()">Let's Go! 🎉</button>
+    <p class="error-msg" id="errorMsg">💔 Oops! Please enter your name first~</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SURPRISE PAGE
+══════════════════════════════════════════════ -->
+<div id="surprisePage">
+  <div class="surprise-card">
+    <span class="surprise-icon">💖</span>
+
+    <div class="sparkle-row">
+      <span>✨</span><span>🌸</span><span>💕</span><span>🌸</span><span>✨</span>
+    </div>
+
+    <h2 class="surprise-title" id="questionText"></h2>
+
+    <div class="buttons-row">
+      <span class="yes-placeholder">Yes 💖</span>
+      <button class="btn-no" onclick="clickNo()">No 💔</button>
+    </div>
+  </div>
+</div>
+
+<!-- FUNNY MESSAGE OVERLAY -->
+<div id="funnyMsg">
+  <div class="funny-emoji">😂</div>
+  <h2>Website Closed Successfully...</h2>
+  <p>...Just kidding! 😜<br/>You can't escape this surprise so easily! 💖<br/><br/>Come back and say YES already! 🥺</p>
+</div>
+
+<!-- YES BUTTON (fixed, moves around) -->
+<button id="yesBtn" style="display:none;" onclick="clickYes()">Yes 💖</button>
+
+<!-- ══════════════════════════════════════════════
+     SHOPCLUES FULLSCREEN OVERLAY
+══════════════════════════════════════════════ -->
+<div id="shopOverlay">
+  <div id="shopTopBar">
+    <span>🛍️ ShopClues — Online Shopping India</span>
+    <a href="https://www.shopclues.com" target="_blank" rel="noopener">Open in Browser ↗</a>
+    <button id="closeShopBtn" onclick="closeShop()" title="Close">✕</button>
+  </div>
+  <iframe
+    id="shopFrame"
+    src="https://www.shopclues.com"
+    title="ShopClues Online Shopping"
+    sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
+  ></iframe>
+  <div id="iframeBlockMsg">
+    <span style="font-size:3.5rem;">🛍️</span>
+    <p>ShopClues has opened in a new tab for the best experience!</p>
+    <a href="https://www.shopclues.com" target="_blank" rel="noopener" onclick="closeShop()">Visit ShopClues 🎉</a>
+  </div>
+</div>
+
+<script>
+  /* ════════════════════════════════════════
+     CHERRY BLOSSOM PETAL ANIMATION
+  ════════════════════════════════════════ */
+  const canvas = document.getElementById('petalCanvas');
+  const ctx    = canvas.getContext('2d');
+  let petals   = [];
+  const PETAL_COUNT = 55;
+
+  function resize() {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Draw a cute 5-petal cherry blossom
+  function drawBlossom(x, y, r, rot, alpha, color) {
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.translate(x, y);
+    ctx.rotate(rot);
+    for (let i = 0; i < 5; i++) {
+      ctx.save();
+      ctx.rotate((Math.PI * 2 / 5) * i);
+      ctx.beginPath();
+      ctx.ellipse(0, -r * 0.72, r * 0.42, r * 0.72, 0, 0, Math.PI * 2);
+      ctx.fillStyle = color;
+      ctx.fill();
+      ctx.restore();
+    }
+    // Center circle
+    ctx.beginPath();
+    ctx.arc(0, 0, r * 0.22, 0, Math.PI * 2);
+    ctx.fillStyle = '#ffe4f0';
+    ctx.fill();
+    ctx.restore();
+  }
+
+  const COLORS = ['#ffb3d9','#ff85c2','#ffc2e2','#ff69b4','#ffadd6','#ff94cc','#ffd6ec'];
+
+  function spawnPetal() {
+    return {
+      x:     Math.random() * canvas.width,
+      y:     -30 - Math.random() * 80,
+      r:     10 + Math.random() * 14,
+      rot:   Math.random() * Math.PI * 2,
+      rotV:  (Math.random() - 0.5) * 0.035,
+      vx:    (Math.random() - 0.5) * 1.1,
+      vy:    1 + Math.random() * 1.6,
+      alpha: 0.55 + Math.random() * 0.4,
+      color: COLORS[Math.floor(Math.random() * COLORS.length)],
+      swing: Math.random() * Math.PI * 2,
+      swingSpeed: 0.02 + Math.random() * 0.025,
+    };
+  }
+
+  for (let i = 0; i < PETAL_COUNT; i++) {
+    const p = spawnPetal();
+    p.y = Math.random() * canvas.height; // seed on screen at start
+    petals.push(p);
+  }
+
+  function animatePetals() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    petals.forEach(p => {
+      p.swing += p.swingSpeed;
+      p.x  += p.vx + Math.sin(p.swing) * 0.7;
+      p.y  += p.vy;
+      p.rot += p.rotV;
+      if (p.y > canvas.height + 40) {
+        Object.assign(p, spawnPetal());
+      }
+      drawBlossom(p.x, p.y, p.r, p.rot, p.alpha, p.color);
+    });
+    requestAnimationFrame(animatePetals);
+  }
+  animatePetals();
+
+  /* ════════════════════════════════════════
+     LANDING → SURPRISE TRANSITION
+  ════════════════════════════════════════ */
+  const nameInput   = document.getElementById('nameInput');
+  const errorMsg    = document.getElementById('errorMsg');
+  const landingPage = document.getElementById('landingPage');
+  const surprisePage= document.getElementById('surprisePage');
+  const questionText= document.getElementById('questionText');
+  const yesBtn      = document.getElementById('yesBtn');
+
+  nameInput.addEventListener('keydown', e => { if (e.key === 'Enter') goToSurprise(); });
+
+  function goToSurprise() {
+    const name = nameInput.value.trim();
+    if (!name) {
+      errorMsg.style.display = 'block';
+      errorMsg.style.animation = 'none';
+      void errorMsg.offsetWidth;
+      errorMsg.style.animation = 'shake 0.4s ease';
+      return;
+    }
+    errorMsg.style.display = 'none';
+
+    // Build question
+    questionText.innerHTML = `<span class="user-name">${escapeHtml(name)}</span>, do you want a surprise? 🎁`;
+
+    // Transition
+    landingPage.style.transition  = 'opacity 0.5s, transform 0.5s';
+    landingPage.style.opacity     = '0';
+    landingPage.style.transform   = 'scale(0.9)';
+    setTimeout(() => {
+      landingPage.style.display   = 'none';
+      surprisePage.style.display  = 'flex';
+      surprisePage.style.opacity  = '0';
+      surprisePage.style.transition = 'opacity 0.5s';
+      void surprisePage.offsetWidth;
+      surprisePage.style.opacity  = '1';
+      showYesBtn();
+    }, 480);
+  }
+
+  function escapeHtml(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  /* ════════════════════════════════════════
+     YES BUTTON — MISCHIEVOUS MOVEMENT
+  ════════════════════════════════════════ */
+  const MARGIN = 20;
+  let yesBtnShown = false;
+
+  function showYesBtn() {
+    yesBtn.style.display = 'block';
+    yesBtnShown = true;
+    placeYesRandom();
+    attachYesListeners();
+  }
+
+  function safeRect() {
+    const bw = yesBtn.offsetWidth  || 130;
+    const bh = yesBtn.offsetHeight || 56;
+    return {
+      minX: MARGIN,
+      minY: MARGIN,
+      maxX: window.innerWidth  - bw - MARGIN,
+      maxY: window.innerHeight - bh - MARGIN,
+    };
+  }
+
+  function placeYesRandom() {
+    const r = safeRect();
+    const x = r.minX + Math.random() * (r.maxX - r.minX);
+    const y = r.minY + Math.random() * (r.maxY - r.minY);
+    yesBtn.style.left = x + 'px';
+    yesBtn.style.top  = y + 'px';
+  }
+
+  function attachYesListeners() {
+    // Mouse proximity on the whole document
+    document.addEventListener('mousemove', handleYesProximity);
+    // Touch proximity
+    document.addEventListener('touchmove', handleYesTouch, { passive: true });
+    // Fallback: mouseenter on button itself
+    yesBtn.addEventListener('mouseenter', placeYesRandom);
+    yesBtn.addEventListener('touchstart', placeYesRandom, { passive: true });
+    // NOTE: click is handled by onclick="clickYes()" — no runaway on click!
+  }
+
+  const PROXIMITY = 90; // pixels proximity to trigger jump
+
+  function handleYesProximity(e) {
+    if (!yesBtnShown) return;
+    const rect = yesBtn.getBoundingClientRect();
+    const cx   = rect.left + rect.width  / 2;
+    const cy   = rect.top  + rect.height / 2;
+    const dx   = e.clientX - cx;
+    const dy   = e.clientY - cy;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    if (dist < PROXIMITY + rect.width / 2) placeYesRandom();
+  }
+
+  function handleYesTouch(e) {
+    if (!yesBtnShown || !e.touches.length) return;
+    const t = e.touches[0];
+    const rect = yesBtn.getBoundingClientRect();
+    const cx   = rect.left + rect.width  / 2;
+    const cy   = rect.top  + rect.height / 2;
+    const dx   = t.clientX - cx;
+    const dy   = t.clientY - cy;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    if (dist < PROXIMITY + rect.width / 2) placeYesRandom();
+  }
+
+  // Reposition on window resize
+  window.addEventListener('resize', () => {
+    if (yesBtnShown) placeYesRandom();
+  });
+
+  /* ════════════════════════════════════════
+     YES CLICK — Open ShopClues Fullscreen
+  ════════════════════════════════════════ */
+  function clickYes() {
+    // Stop button from running
+    document.removeEventListener('mousemove', handleYesProximity);
+    document.removeEventListener('touchmove', handleYesTouch);
+    yesBtnShown = false;
+    yesBtn.style.display = 'none';
+
+    const overlay = document.getElementById('shopOverlay');
+    const frame   = document.getElementById('shopFrame');
+    const blockMsg= document.getElementById('iframeBlockMsg');
+
+    overlay.classList.add('active');
+
+    // Detect if iframe was blocked (X-Frame-Options / CSP)
+    let loaded = false;
+    frame.addEventListener('load', () => { loaded = true; }, { once: true });
+
+    setTimeout(() => {
+      if (!loaded) {
+        // iframe blocked — show fallback and open in new tab
+        frame.style.display = 'none';
+        blockMsg.style.display = 'flex';
+        window.open('https://www.shopclues.com', '_blank', 'noopener');
+      }
+    }, 3500);
+  }
+
+  function closeShop() {
+    const overlay = document.getElementById('shopOverlay');
+    const frame   = document.getElementById('shopFrame');
+    const blockMsg= document.getElementById('iframeBlockMsg');
+    overlay.classList.remove('active');
+    // Reset for re-open
+    frame.style.display = 'block';
+    blockMsg.style.display = 'none';
+    // Restore surprise page
+    surprisePage.style.display = 'flex';
+    yesBtnShown = true;
+    yesBtn.style.display = 'block';
+    placeYesRandom();
+    document.addEventListener('mousemove', handleYesProximity);
+    document.addEventListener('touchmove', handleYesTouch, { passive: true });
+  }
+
+  /* ════════════════════════════════════════
+     NO BUTTON
+  ════════════════════════════════════════ */
+  function clickNo() {
+    // Attempt to close the tab
+    window.open('', '_self');
+    window.close();
+
+    // If still open after short delay, show funny message
+    setTimeout(() => {
+      const funny = document.getElementById('funnyMsg');
+      funny.style.display = 'flex';
+    }, 350);
+  }
+</script>
+</body>
+</html>
